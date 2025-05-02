@@ -1,5 +1,6 @@
 package com.terzicaglar.socialnetwork.service;
 
+import com.terzicaglar.socialnetwork.exception.UserProfileNotFoundException;
 import com.terzicaglar.socialnetwork.model.UserProfileConverter;
 import com.terzicaglar.socialnetwork.model.UserProfileDto;
 import com.terzicaglar.socialnetwork.repository.UserProfileRepository;
@@ -17,6 +18,6 @@ public class UserProfileService {
     public UserProfileDto getUserProfileById(Long id) {
         return userProfileRepository.findById(id)
                 .map(UserProfileConverter::convertToDto)
-                .orElseThrow(() -> new RuntimeException("User profile not found"));
+                .orElseThrow(() -> new UserProfileNotFoundException("User profile not found with id: " + id));
     }
 }
