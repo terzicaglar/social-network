@@ -1,5 +1,5 @@
 INSERT INTO users (first_name, last_name, email, date_of_birth, user_defined_fields)
-VALUES ('Alice', 'Smith', 'alice@example.com', DATE '1990-05-10', '{"hobbies": ["cycling","running"], "city": "Berlin"}'),
+VALUES ('Alice', 'Smith', 'alice@example.com', DATE '1990-05-01', '{"hobbies": ["cycling","running"], "city": "Berlin"}'),
        ('Bob', 'Johnson', 'bob@example.com', DATE '1985-08-22', '{"pet": "dog", "favorite_color": "blue"}'),
        ('Clara', 'Lee', 'clara@example.com', DATE '1992-11-03', '{"job": "engineer", "language": "German"}'),
        ('David', 'Kim', 'david@example.com', DATE '1988-03-15', '{"music": "jazz", "sport": "tennis"}'),
