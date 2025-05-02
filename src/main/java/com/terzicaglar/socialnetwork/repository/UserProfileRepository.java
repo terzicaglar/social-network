@@ -21,7 +21,7 @@ public class UserProfileRepository {
     }
 
     public Optional<UserProfile> findById(Long id) {
-        String sql = "SELECT id, first_name, last_name, email, date_of_birth, user_defined_fields, is_fraud FROM users WHERE id = ?";
+        String sql = "SELECT * FROM users WHERE id = ?";
         return jdbcTemplate.query(sql, ps -> ps.setLong(1, id), rs -> {
             if (rs.next()) {
                 return Optional.of(mapRowToUserProfile(rs));
