@@ -23,4 +23,18 @@ public class LikeRepository {
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, sourceUserId, targetUserId);
         return count != null && count > 0;
     }
+
+    public int countDistinctTargetsInFirst10Minutes(Long userId) {
+        String sql = """
+                    SELECT COUNT(DISTINCT target_user_id)
+                    FROM user_likes
+                    WHERE source_user_id = ?
+                      AND created_at <= (
+                          SELECT DATEADD('MINUTE', 10, MIN(created_at))
+                          FROM user_likes
+                          WHERE source_user_id = ?
+                      )
+                """;
+        return jdbcTemplate.queryForObject(sql, Integer.class, userId, userId);
+    }
 }

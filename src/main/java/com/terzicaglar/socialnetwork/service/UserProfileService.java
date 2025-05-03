@@ -25,4 +25,11 @@ public class UserProfileService {
         return userProfileRepository.existsById(id);
     }
 
+    public void markUserAsFraud(Long userId) {
+        if (!userProfileExistsById(userId)) {
+            throw new UserProfileNotFoundException("User profile not found with id: " + userId);
+        }
+        userProfileRepository.markUserAsFraud(userId);
+    }
+
 }

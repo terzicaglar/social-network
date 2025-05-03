@@ -11,11 +11,12 @@ public class LikeService {
     private final Logger logger = org.slf4j.LoggerFactory.getLogger(LikeService.class);
     private final LikeRepository likeRepository;
     private final UserProfileService userProfileService;  // Optional, for user validation
-    //private final FraudService fraudService;  // Optional, for fraud detection
+    private final FraudDetectionService fraudDetectionService;  // Optional, for fraud detection
 
-    public LikeService(LikeRepository likeRepository, UserProfileService userProfileService) {
+    public LikeService(LikeRepository likeRepository, UserProfileService userProfileService, FraudDetectionService fraudDetectionService) {
         this.likeRepository = likeRepository;
         this.userProfileService = userProfileService;
+        this.fraudDetectionService = fraudDetectionService;
     }
 
     //@Transactional
@@ -25,7 +26,7 @@ public class LikeService {
         // Check if the like already exists, if not, save it
         if (!likeRepository.likeExists(sourceUserId, targetUserId)) {
             likeRepository.saveLike(sourceUserId, targetUserId);
-            //fraudService.evaluateAndMarkFraudIfNeeded(sourceUserId);
+            fraudDetectionService.evaluateFraudStatus(sourceUserId);
         } else {
             logger.info("Like already exists from user {} to user {}", sourceUserId, targetUserId);
         }

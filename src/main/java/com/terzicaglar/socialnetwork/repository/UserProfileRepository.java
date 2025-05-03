@@ -49,4 +49,9 @@ public class UserProfileRepository {
         userProfile.setFraud(rs.getBoolean("is_fraud"));
         return userProfile;
     }
+
+    public void markUserAsFraud(Long userId) {
+        String sql = "UPDATE users SET is_fraud = TRUE WHERE id = ?";
+        jdbcTemplate.update(sql, userId);
+    }
 }

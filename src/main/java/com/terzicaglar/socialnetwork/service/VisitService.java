@@ -15,10 +15,12 @@ public class VisitService {
 
     private final VisitRepository visitRepository;
     private final UserProfileService userProfileService;
+    private final FraudDetectionService fraudDetectionService;  // Optional, for fraud detection
 
-    public VisitService(VisitRepository visitRepository, UserProfileService userProfileService) {
+    public VisitService(VisitRepository visitRepository, UserProfileService userProfileService, FraudDetectionService fraudDetectionService) {
         this.visitRepository = visitRepository;
         this.userProfileService = userProfileService;
+        this.fraudDetectionService = fraudDetectionService;
     }
 
     //@Transactional
@@ -26,6 +28,7 @@ public class VisitService {
         UserValidationUtils.validateUserExists(userProfileService, sourceUserId);
         UserValidationUtils.validateUserExists(userProfileService, targetUserId);
 
+        fraudDetectionService.evaluateFraudStatus(sourceUserId);
         visitRepository.saveVisit(sourceUserId, targetUserId);
     }
 

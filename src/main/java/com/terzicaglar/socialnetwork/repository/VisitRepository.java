@@ -41,4 +41,18 @@ public class VisitRepository {
         String sql = "SELECT COUNT(*) FROM user_visits WHERE target_user_id = ?";
         return jdbcTemplate.queryForObject(sql, Long.class, userId);
     }
+
+    public int countDistinctTargetsInFirst10Minutes(Long userId) {
+        String sql = """
+                    SELECT COUNT(DISTINCT target_user_id)
+                    FROM user_visits
+                    WHERE source_user_id = ?
+                      AND created_at <= (
+                          SELECT DATEADD('MINUTE', 10, MIN(created_at))
+                          FROM user_visits
+                          WHERE source_user_id = ?
+                      )
+                """;
+        return jdbcTemplate.queryForObject(sql, Integer.class, userId, userId);
+    }
 }
