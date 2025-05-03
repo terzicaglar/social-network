@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -18,6 +19,12 @@ public class UserProfileRepository {
 
     public UserProfileRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public boolean existsById(Long id) {
+        String sql = "SELECT EXISTS(SELECT 1 FROM users WHERE id = ?)";
+        Boolean exists = jdbcTemplate.queryForObject(sql, Boolean.class, id);
+        return Boolean.TRUE.equals(exists);
     }
 
     public Optional<UserProfile> findById(Long id) {

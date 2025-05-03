@@ -1,6 +1,6 @@
 package com.terzicaglar.socialnetwork.controller;
 
-import com.terzicaglar.socialnetwork.model.VisitRequest;
+import com.terzicaglar.socialnetwork.model.InteractionRequest;
 import com.terzicaglar.socialnetwork.service.VisitService;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,7 +18,7 @@ public class VisitController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Void> recordVisit(@RequestBody VisitRequest request) {
+    public ResponseEntity<Void> recordVisit(@RequestBody InteractionRequest request) {
         visitService.recordVisit(request.getSourceUserId(), request.getTargetUserId());
         return ResponseEntity.ok().build();
     }

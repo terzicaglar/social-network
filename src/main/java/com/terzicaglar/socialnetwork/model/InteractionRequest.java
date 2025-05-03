@@ -2,7 +2,9 @@ package com.terzicaglar.socialnetwork.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class VisitRequest {
+// This class represents a request for an interaction between two users, such as a visit and like.
+
+public class InteractionRequest {
 
     @JsonProperty("source_user_id")
     private Long sourceUserId;
@@ -10,10 +12,10 @@ public class VisitRequest {
     @JsonProperty("target_user_id")
     private Long targetUserId;
 
-    public VisitRequest() {
+    public InteractionRequest() {
     }
 
-    public VisitRequest(Long sourceUserId, Long targetUserId) {
+    public InteractionRequest(Long sourceUserId, Long targetUserId) {
         this.sourceUserId = sourceUserId;
         this.targetUserId = targetUserId;
     }

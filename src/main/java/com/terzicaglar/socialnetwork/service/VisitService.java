@@ -1,6 +1,7 @@
 package com.terzicaglar.socialnetwork.service;
 
 import com.terzicaglar.socialnetwork.repository.VisitRepository;
+import com.terzicaglar.socialnetwork.util.UserValidationUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -8,16 +9,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class VisitService {
 
     private final VisitRepository visitRepository;
+    private final UserProfileService userProfileService;
 
-    public VisitService(VisitRepository visitRepository) {
+    public VisitService(VisitRepository visitRepository, UserProfileService userProfileService) {
         this.visitRepository = visitRepository;
+        this.userProfileService = userProfileService;
     }
 
     //@Transactional
     public void recordVisit(Long sourceUserId, Long targetUserId) {
-        if (sourceUserId.equals(targetUserId)) {
-            throw new IllegalArgumentException("Users cannot visit their own profile"); // TODO create custom exception
-        }
+        UserValidationUtils.validateUserExists(userProfileService, sourceUserId);
+        UserValidationUtils.validateUserExists(userProfileService, targetUserId);
 
         visitRepository.saveVisit(sourceUserId, targetUserId);
     }

@@ -20,4 +20,9 @@ public class UserProfileService {
                 .map(UserProfileConverter::convertToDto)
                 .orElseThrow(() -> new UserProfileNotFoundException("User profile not found with id: " + id));
     }
+
+    public boolean userProfileExistsById(Long id) {
+        return userProfileRepository.existsById(id);
+    }
+
 }
