@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
         Map<String, String> response = new HashMap<>();
         response.put("status", "404");
         response.put("message", ex.getMessage());
-        logger.error("Not Found: {}", ex.getMessage());
+        logger.error("Not Found: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
         Map<String, String> response = new HashMap<>();
         response.put("error", "Internal Server Error");
         response.put("message", ex.getMessage());
-        logger.error("Internal Server Error: {}", ex.getMessage());
+        logger.error("Internal Server Error: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
