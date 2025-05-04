@@ -11,6 +11,7 @@ import java.util.List;
 @Service
 public class VisitService {
 
+    private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(VisitService.class);
     private final VisitRepository visitRepository;
     private final UserProfileService userProfileService;
     private final FraudDetectionService fraudDetectionService;  // Optional, for fraud detection
@@ -27,6 +28,7 @@ public class VisitService {
         UserValidationUtils.validateUserExists(userProfileService, targetUserId);
 
         visitRepository.saveVisit(sourceUserId, targetUserId);
+        logger.info("Visit recorded from user {} to user {}", sourceUserId, targetUserId);
         fraudDetectionService.evaluateFraudStatus(sourceUserId);
     }
 
@@ -37,6 +39,7 @@ public class VisitService {
 
         // Calculate offset for pagination
         int offset = (page - 1) * size;
+        logger.debug("Fetching visitors for user {}: page {}, size {}, offset {}", userId, page, size, offset);
 
         // Fetch visitors from the repository
         List<VisitorDto> visitors = visitRepository.getVisitors(userId, offset, size);

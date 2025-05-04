@@ -26,6 +26,7 @@ public class LikeService {
         // Check if the like already exists, if not, save it
         if (!likeRepository.likeExists(sourceUserId, targetUserId)) {
             likeRepository.saveLike(sourceUserId, targetUserId);
+            logger.info("Like recorded from user {} to user {}", sourceUserId, targetUserId);
             fraudDetectionService.evaluateFraudStatus(sourceUserId);
         } else {
             logger.info("Like already exists from user {} to user {}", sourceUserId, targetUserId);
