@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleGeneralException(Exception ex) {
         Map<String, String> response = new HashMap<>();
         response.put("error", "Internal Server Error");
-        response.put("message", ex.getMessage());
+        response.put("message", "An unexpected error occurred. Please try again later.");
         logger.error("Internal Server Error: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
