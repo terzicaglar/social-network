@@ -45,21 +45,14 @@ public class VisitRepository {
         return jdbcTemplate.queryForObject(sql, Long.class, userId);
     }
 
-    public int countDistinctTargetsInFirst10Minutes(Long userId) {
+    public int countDistinctTargetsInFirstNMinutes(Long userId) {
         String sql = """
-                    WITH first_visit AS (
-                        SELECT MIN(created_at) as first_time
-                        FROM user_visits
-                        WHERE source_user_id = ?
-                    )
-                    SELECT COUNT(DISTINCT target_user_id)
-                    FROM user_visits
-                    WHERE source_user_id = ?
-                      AND created_at <= (
-                          SELECT DATEADD('MINUTE', ?, first_time)
-                          FROM first_visit
-                      )
+                SELECT COUNT(DISTINCT uv.target_user_id)
+                FROM user_visits uv
+                WHERE uv.source_user_id = ?
+                  AND uv.created_at >= DATEADD('MINUTE', -?, CURRENT_TIMESTAMP)
+                  AND uv.created_at <= CURRENT_TIMESTAMP;
                 """;
-        return jdbcTemplate.queryForObject(sql, Integer.class, userId, userId, fraudProperties.getPeriodMinutes());
+        return jdbcTemplate.queryForObject(sql, Integer.class, userId, fraudProperties.getPeriodMinutes());
     }
 }

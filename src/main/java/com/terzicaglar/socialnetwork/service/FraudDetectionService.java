@@ -24,8 +24,8 @@ public class FraudDetectionService {
     }
 
     public void evaluateFraudStatus(Long userId) {
-        int visitCount = visitRepository.countDistinctTargetsInFirst10Minutes(userId);
-        int likeCount = likeRepository.countDistinctTargetsInFirst10Minutes(userId);
+        int visitCount = visitRepository.countDistinctTargetsInFirstNMinutes(userId);
+        int likeCount = likeRepository.countDistinctTargetsInFirstNMinutes(userId);
 
         // TODO check logic, it may be 1 less
         if ((visitCount + likeCount) >= fraudProperties.getLimit()) {

@@ -35,22 +35,15 @@ public class LikeRepository {
         }, ResultSet::next));
     }
 
-    public int countDistinctTargetsInFirst10Minutes(Long userId) {
+    public int countDistinctTargetsInFirstNMinutes(Long userId) {
         // Using CTE to avoid subquery execution for each row
         String sql = """
-                    WITH first_like AS (
-                        SELECT MIN(created_at) as first_time
-                        FROM user_likes
-                        WHERE source_user_id = ?
-                    )
-                    SELECT COUNT(DISTINCT target_user_id)
-                    FROM user_likes
-                    WHERE source_user_id = ?
-                      AND created_at <= (
-                          SELECT DATEADD('MINUTE', ?, first_time)
-                          FROM first_like
-                      )
+                SELECT COUNT(DISTINCT uv.target_user_id)
+                FROM user_likes uv
+                WHERE uv.source_user_id = ?
+                  AND uv.created_at >= DATEADD('MINUTE', -?, CURRENT_TIMESTAMP)
+                  AND uv.created_at <= CURRENT_TIMESTAMP;
                 """;
-        return jdbcTemplate.queryForObject(sql, Integer.class, userId, userId, fraudProperties.getPeriodMinutes());
+        return jdbcTemplate.queryForObject(sql, Integer.class, userId, fraudProperties.getPeriodMinutes());
     }
 }
