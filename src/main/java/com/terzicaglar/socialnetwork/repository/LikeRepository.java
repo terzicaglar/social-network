@@ -17,7 +17,6 @@ public class LikeRepository {
         this.fraudProperties = fraudProperties;
     }
 
-    // Method to save a like
     public void saveLike(Long sourceUserId, Long targetUserId) {
         String sql = "INSERT INTO user_likes (source_user_id, target_user_id) VALUES (?, ?)";
         jdbcTemplate.update(sql, sourceUserId, targetUserId);
@@ -36,7 +35,6 @@ public class LikeRepository {
     }
 
     public int countDistinctTargetsInFirstNMinutes(Long userId) {
-        // Using CTE to avoid subquery execution for each row
         String sql = """
                 SELECT COUNT(DISTINCT uv.target_user_id)
                 FROM user_likes uv

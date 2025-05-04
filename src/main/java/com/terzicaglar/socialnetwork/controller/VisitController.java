@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Visit", description = "APIs for managing user profile visits")
 public class VisitController {
 
+    public static final int MAXIMUM_PAGE_SIZE = 100;
+    private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(VisitController.class);
     private final VisitService visitService;
 
     public VisitController(VisitService visitService) {
@@ -52,9 +54,14 @@ public class VisitController {
             @RequestParam(defaultValue = "10") int size) {
 
         // Validate page and size
-        // TODO Move this validation to another class
-        if (page <= 0) page = 1;
-        if (size <= 0 || size > 100) size = 10;
+        if (page <= 0) {
+            logger.warn("Invalid page number: {}. Defaulting to page 1.", page);
+            page = 1;
+        }
+        if (size <= 0 || size > MAXIMUM_PAGE_SIZE) {
+            logger.warn("Invalid size: {}. Defaulting to size 10.", size);
+            size = 10;
+        }
 
         PaginationResponse<VisitorDto> visitors = visitService.getVisitors(userId, page, size);
         return ResponseEntity.ok(visitors);

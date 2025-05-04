@@ -27,7 +27,6 @@ public class FraudDetectionService {
         int visitCount = visitRepository.countDistinctTargetsInFirstNMinutes(userId);
         int likeCount = likeRepository.countDistinctTargetsInFirstNMinutes(userId);
 
-        // TODO check logic, it may be 1 less
         if ((visitCount + likeCount) >= fraudProperties.getLimit()) {
             logger.warn("User {} is marked as fraud due to high activity: {} visits and {} likes in the first {} minutes.",
                     userId, visitCount, likeCount, fraudProperties.getPeriodMinutes());
