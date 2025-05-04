@@ -1,10 +1,13 @@
 package com.terzicaglar.socialnetwork.service;
 
 import com.terzicaglar.socialnetwork.exception.UserProfileNotFoundException;
+import com.terzicaglar.socialnetwork.model.UserProfile;
 import com.terzicaglar.socialnetwork.model.UserProfileConverter;
 import com.terzicaglar.socialnetwork.model.UserProfileDto;
 import com.terzicaglar.socialnetwork.repository.UserProfileRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UserProfileService {
@@ -25,11 +28,8 @@ public class UserProfileService {
         return userProfileRepository.existsById(id);
     }
 
-    public void markUserAsFraud(Long userId) {
-        if (!userProfileExistsById(userId)) {
-            throw new UserProfileNotFoundException("User profile not found with id: " + userId);
-        }
-        userProfileRepository.markUserAsFraud(userId);
+    public void bulkInsertUsers(List<UserProfile> users) {
+        userProfileRepository.bulkInsert(users);
     }
 
 }
