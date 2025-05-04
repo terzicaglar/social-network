@@ -1,5 +1,6 @@
 package com.terzicaglar.socialnetwork.repository;
 
+import com.terzicaglar.socialnetwork.config.FraudProperties;
 import com.terzicaglar.socialnetwork.model.VisitorDto;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -10,9 +11,11 @@ import java.util.List;
 public class VisitRepository {
 
     private final JdbcTemplate jdbcTemplate;
+    private final FraudProperties fraudProperties;
 
-    public VisitRepository(JdbcTemplate jdbcTemplate) {
+    public VisitRepository(JdbcTemplate jdbcTemplate, FraudProperties fraudProperties) {
         this.jdbcTemplate = jdbcTemplate;
+        this.fraudProperties = fraudProperties;
     }
 
     public void saveVisit(Long sourceUserId, Long targetUserId) {
@@ -48,11 +51,11 @@ public class VisitRepository {
                     FROM user_visits
                     WHERE source_user_id = ?
                       AND created_at <= (
-                          SELECT DATEADD('MINUTE', 10, MIN(created_at))
+                          SELECT DATEADD('MINUTE', ?, MIN(created_at))
                           FROM user_visits
                           WHERE source_user_id = ?
                       )
                 """;
-        return jdbcTemplate.queryForObject(sql, Integer.class, userId, userId);
+        return jdbcTemplate.queryForObject(sql, Integer.class, userId, fraudProperties.getPeriodMinutes(), userId);
     }
 }

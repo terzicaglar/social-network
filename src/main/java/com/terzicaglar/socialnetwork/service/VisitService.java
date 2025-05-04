@@ -1,12 +1,10 @@
 package com.terzicaglar.socialnetwork.service;
 
 import com.terzicaglar.socialnetwork.model.PaginationResponse;
-import com.terzicaglar.socialnetwork.model.UserProfileDto;
 import com.terzicaglar.socialnetwork.model.VisitorDto;
 import com.terzicaglar.socialnetwork.repository.VisitRepository;
 import com.terzicaglar.socialnetwork.util.UserValidationUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -28,8 +26,8 @@ public class VisitService {
         UserValidationUtils.validateUserExists(userProfileService, sourceUserId);
         UserValidationUtils.validateUserExists(userProfileService, targetUserId);
 
-        fraudDetectionService.evaluateFraudStatus(sourceUserId);
         visitRepository.saveVisit(sourceUserId, targetUserId);
+        fraudDetectionService.evaluateFraudStatus(sourceUserId);
     }
 
     public PaginationResponse<VisitorDto> getVisitors(Long userId, int page, int size) {

@@ -1,5 +1,6 @@
 package com.terzicaglar.socialnetwork.repository;
 
+import com.terzicaglar.socialnetwork.config.FraudProperties;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -7,9 +8,11 @@ import org.springframework.stereotype.Repository;
 public class LikeRepository {
 
     private final JdbcTemplate jdbcTemplate;
+    private final FraudProperties fraudProperties;
 
-    public LikeRepository(JdbcTemplate jdbcTemplate) {
+    public LikeRepository(JdbcTemplate jdbcTemplate, FraudProperties fraudProperties) {
         this.jdbcTemplate = jdbcTemplate;
+        this.fraudProperties = fraudProperties;
     }
 
     // Method to save a like
@@ -30,11 +33,11 @@ public class LikeRepository {
                     FROM user_likes
                     WHERE source_user_id = ?
                       AND created_at <= (
-                          SELECT DATEADD('MINUTE', 10, MIN(created_at))
+                          SELECT DATEADD('MINUTE', ?, MIN(created_at))
                           FROM user_likes
                           WHERE source_user_id = ?
                       )
                 """;
-        return jdbcTemplate.queryForObject(sql, Integer.class, userId, userId);
+        return jdbcTemplate.queryForObject(sql, Integer.class, userId, fraudProperties.getPeriodMinutes(), userId);
     }
 }
