@@ -1,14 +1,21 @@
 package com.terzicaglar.socialnetwork.model;
 
-import java.sql.Date;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Past;
+
 import java.time.LocalDate;
-import java.util.Map;
 
 public class UserProfile {
     private Long id;
+    @NotBlank(message = "First name is mandatory")
     private String firstName;
+    @NotBlank(message = "Last name is mandatory")
     private String lastName;
+    @Email(message = "Email should be valid")
+    @NotBlank(message = "Email is mandatory")
     private String email;
+    @Past(message = "Date of birth must be in the past")
     private LocalDate dateOfBirth;
     private String userDefinedFields;
     private Boolean isFraud;

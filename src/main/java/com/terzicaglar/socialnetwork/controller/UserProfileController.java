@@ -3,6 +3,7 @@ package com.terzicaglar.socialnetwork.controller;
 import com.terzicaglar.socialnetwork.model.UserProfile;
 import com.terzicaglar.socialnetwork.model.UserProfileDto;
 import com.terzicaglar.socialnetwork.service.UserProfileService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,7 @@ public class UserProfileController {
     }
 
     @PostMapping("/bulk")
-    public ResponseEntity<String> batchInsertUsers(@RequestBody List<UserProfile> users) {
+    public ResponseEntity<String> batchInsertUsers(@Valid @RequestBody List<UserProfile> users) {
         userProfileService.bulkInsertUsers(users);
         return ResponseEntity.ok("Users inserted successfully");
     }
