@@ -4,6 +4,8 @@ import com.terzicaglar.socialnetwork.config.FraudProperties;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
+
 @Repository
 public class LikeRepository {
 
@@ -22,22 +24,33 @@ public class LikeRepository {
     }
 
     public boolean likeExists(Long sourceUserId, Long targetUserId) {
-        String sql = "SELECT COUNT(*) FROM user_likes WHERE source_user_id = ? AND target_user_id = ?";
-        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, sourceUserId, targetUserId);
-        return count != null && count > 0;
+        String sql = """
+                    SELECT 1 FROM user_likes 
+                    WHERE source_user_id = ? AND target_user_id = ? 
+                    LIMIT 1
+                """;
+        return Boolean.TRUE.equals(jdbcTemplate.query(sql, ps -> {
+            ps.setLong(1, sourceUserId);
+            ps.setLong(2, targetUserId);
+        }, ResultSet::next));
     }
 
     public int countDistinctTargetsInFirst10Minutes(Long userId) {
+        // Using CTE to avoid subquery execution for each row
         String sql = """
+                    WITH first_like AS (
+                        SELECT MIN(created_at) as first_time
+                        FROM user_likes
+                        WHERE source_user_id = ?
+                    )
                     SELECT COUNT(DISTINCT target_user_id)
                     FROM user_likes
                     WHERE source_user_id = ?
                       AND created_at <= (
-                          SELECT DATEADD('MINUTE', ?, MIN(created_at))
-                          FROM user_likes
-                          WHERE source_user_id = ?
+                          SELECT DATEADD('MINUTE', ?, first_time)
+                          FROM first_like
                       )
                 """;
-        return jdbcTemplate.queryForObject(sql, Integer.class, userId, fraudProperties.getPeriodMinutes(), userId);
+        return jdbcTemplate.queryForObject(sql, Integer.class, userId, userId, fraudProperties.getPeriodMinutes());
     }
 }

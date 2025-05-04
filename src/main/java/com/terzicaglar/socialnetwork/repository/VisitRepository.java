@@ -26,7 +26,7 @@ public class VisitRepository {
     public List<VisitorDto> getVisitors(Long userId, int offset, int size) {
         String sql = "SELECT u.id, u.first_name, u.last_name, uv.created_at " +
                 "FROM user_visits uv " +
-                "JOIN users u ON uv.source_user_id = u.id " +
+                "INNER JOIN users u ON uv.source_user_id = u.id " +
                 "WHERE uv.target_user_id = ? " +
                 "ORDER BY uv.created_at DESC " +
                 "LIMIT ? OFFSET ?";
@@ -47,15 +47,19 @@ public class VisitRepository {
 
     public int countDistinctTargetsInFirst10Minutes(Long userId) {
         String sql = """
+                    WITH first_visit AS (
+                        SELECT MIN(created_at) as first_time
+                        FROM user_visits
+                        WHERE source_user_id = ?
+                    )
                     SELECT COUNT(DISTINCT target_user_id)
                     FROM user_visits
                     WHERE source_user_id = ?
                       AND created_at <= (
-                          SELECT DATEADD('MINUTE', ?, MIN(created_at))
-                          FROM user_visits
-                          WHERE source_user_id = ?
+                          SELECT DATEADD('MINUTE', ?, first_time)
+                          FROM first_visit
                       )
                 """;
-        return jdbcTemplate.queryForObject(sql, Integer.class, userId, fraudProperties.getPeriodMinutes(), userId);
+        return jdbcTemplate.queryForObject(sql, Integer.class, userId, userId, fraudProperties.getPeriodMinutes());
     }
 }
